@@ -1,0 +1,45 @@
+<div class="main-container">
+    <div class="aside">
+        <div class="logo-content">
+            <img class="logo" src="/images/logo.png" alt="">
+            <span class="logo-text">文档中心</span>
+        </div>
+
+        <ul>
+            {{#each documents}}
+                <li>
+                    {{#if_eq type 'folder'}}
+                        <h3>
+                            <a class="doc-link" href="/documents/{{path}}" target="content-frame">{{name}}</a>
+                        </h3>
+                        {{#each children}}
+                            <ul>
+                                {{#if_eq type 'folder'}}
+                                    <h4>
+                                        <a class="doc-link" href="/documents/{{path}}" target="content-frame">{{name}}</a>
+                                    </h4>
+                                    {{#each children}}
+                                        <ul>
+                                            {{#if_eq type 'folder'}}
+                                                <h5>
+                                                    <a class="doc-link" href="/documents/{{path}}" target="content-frame">{{name}}</a>
+                                                </h5>
+                                            {{/if_eq}}
+                                        </ul>
+                                    {{/each}}
+                                {{/if_eq}}
+                            </ul>
+                        {{/each}}
+                    {{/if_eq}}
+                </li>
+            {{/each}}
+        </ul>
+    </div>
+
+    <div class="doc-content">
+        <div class="top-bar">
+            <a class="ret-link" href="https://efapiao.com/">&lt; efapiao.com</a>
+        </div>
+        <iframe name="content-frame" class="content-frame" src="/documents/"></iframe>
+    </div>
+</div>

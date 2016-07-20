@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>文档中心-e发票</title>
+    <link rel="stylesheet" href="/dist/css/style.css">
+    {{#if ENV_DEVELOPMENT}}
+        <script src="http://localhost:35729/livereload.js"></script>
+    {{/if}}
+</head>
+<body>
+{{{body}}}
+<script src="/js/jquery.min.js"></script>
+<script>
+    $(function () {
+        $('.doc-link').click(function () {
+            $('.aside .doc-link').removeClass('active');
+            $(this).addClass('active');
+
+        });
+    });
+</script>
+</body>
+</html>
