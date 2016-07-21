@@ -11,6 +11,7 @@ module.exports = function (grunt) {
     var reloadPort = 35729, files;
 
     grunt.loadNpmTasks('grunt-markdown');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -35,9 +36,10 @@ module.exports = function (grunt) {
                 files: [
                     'app.js',
                     'routes/*.js',
-                    'utils/*.js'
+                    'utils/*.js',
+                    'documents/**/*'
                 ],
-                tasks: ['develop', 'delayed-livereload']
+                tasks: ['copy', 'markdown', 'develop', 'delayed-livereload']
             },
             js: {
                 files: ['public/js/*.js'],
@@ -70,6 +72,37 @@ module.exports = function (grunt) {
                         dest: 'public/dist',
                         ext: '.html'
                     }
+                ],
+                options: {
+                    preCompile: function (src, context) {
+                        //var reg = /\!\[.*\]\(\w*.png\)/ig;
+                        var reg = /\!\[.*\]\(\w*(.png|.jpg|.jpeg|.gif)\)/ig;
+                        var newSrc=src.replace(reg, function () {
+                            var imagePath = arguments[0].substring(arguments[0].lastIndexOf('(')+1, arguments[0].lastIndexOf(')'));
+                            var parsedPath = arguments[0].replace(imagePath, '/dist/documents/images/'+imagePath);
+                            return parsedPath;
+                        });
+                        return newSrc;
+                    }
+                }
+            }
+        },
+
+        copy: {
+            main: {
+                files: [
+                    {
+                        expand: true,
+                        src: [
+                            'documents/**/*.png', 'documents/**/*.PNG',
+                            'documents/**/*.gif', 'documents/**/*.GIF',
+                            'documents/**/*.jpg', 'documents/**/*.JPG',
+                            'documents/**/*.jpeg', 'documents/**/*.JPEG'
+                        ],
+                        dest: 'public/dist/documents/images',
+                        filter: 'isFile',
+                        flatten: true
+                    }
                 ]
             }
         }
@@ -98,6 +131,7 @@ module.exports = function (grunt) {
         'less',
         'develop',
         'markdown',
+        'copy',
         'watch'
     ]);
 
