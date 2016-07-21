@@ -15,11 +15,70 @@
 <script src="/js/jquery.min.js"></script>
 <script>
     $(function () {
-        $('.doc-link').click(function () {
-            $('.aside .doc-link').removeClass('active');
-            $(this).addClass('active');
 
-        });
+        function initMenuEvent(){
+            $('.doc-link').click(function () {
+                activeLink($(this));
+                window.location.hash = getLinkHashValue($(this).attr('href'));
+            });
+        }
+
+        function initDefaultActiveMenu(){
+
+            var targetDoc = window.location.hash;
+
+            if(targetDoc){
+                targetDoc = targetDoc.substr(1, targetDoc.length);
+            }
+
+            $('.doc-link').each(function () {
+                var currentLink = $(this);
+                var href = $(currentLink).attr('href');
+                var parsedHref = getLinkHashValue(href);
+                if(parsedHref == targetDoc){
+                    $('#content-frame').attr('src',href);
+                    activeLink(currentLink);
+                }
+            });
+        }
+
+        function activeLink(link){
+            $('.aside .doc-link').removeClass('active');
+            $(link).addClass('active');
+        }
+
+        function getLinkHashValue(link){
+            return link.replace('/documents', '');
+        }
+
+        function getDocLinkFromAbsoluteUrl(url){
+            var docIndex = url.indexOf('/documents/');
+            if(docIndex > -1){
+                return url.substring(docIndex,url.length);
+            }
+            return url;
+        }
+
+        function getIframeUrl(){
+            var absoluteUrl = $('#content-frame').get(0).contentWindow.location.href;
+            return getDocLinkFromAbsoluteUrl(decodeURI(absoluteUrl));
+        }
+
+        function listenFrameChange(){
+            var iFrameLink = getIframeUrl();
+            setInterval(function () {
+                var currentLink = getIframeUrl();
+                if(currentLink != iFrameLink){
+                    iFrameLink = currentLink;
+                    activeLink($('.doc-link[href="'+currentLink+'"]'));
+                }
+            }, 500);
+        }
+
+        initDefaultActiveMenu();
+        listenFrameChange();
+        initMenuEvent();
+
     });
 </script>
 </body>
