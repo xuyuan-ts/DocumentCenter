@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var PropertiesReader = require('properties-reader');
 
 var documentPath = path.normalize(__dirname + '/../documents');
 
@@ -12,8 +13,14 @@ function getDiretoryTree(dir, done) {
 
         var pending = list.length;
 
-        if (!pending)
-            return done(null, {name: path.basename(dir), type: 'folder', children: results});
+        if (!pending) {
+            return done(null, {
+                name: getName(dir),
+                type: 'folder',
+                order: path.basename(dir),
+                children: results
+            });
+        }
 
         list.forEach(function (file) {
             file = path.resolve(dir, file);
@@ -21,8 +28,9 @@ function getDiretoryTree(dir, done) {
                 if (stat && stat.isDirectory()) {
                     getDiretoryTree(file, function (err, res) {
                         results.unshift({
-                            name: path.basename(file),
+                            name: getName(file),
                             type: 'folder',
+                            order: path.basename(file),
                             path: path.relative(documentPath, file),
                             children: res
                         });
@@ -41,6 +49,21 @@ function getDiretoryTree(dir, done) {
             });
         });
     });
+
+    function getName(fileDir) {
+        var name = path.basename(fileDir);
+        if (name.indexOf('_') > -1) {
+            name = name.substr(name.indexOf('_')+1, name.length);
+        }
+
+        try{
+            var properties = PropertiesReader(path.join(fileDir,'manifest'));
+            name = properties.get('name');
+        }catch(err){
+        }
+
+        return name;
+    }
 }
 
 module.exports = {

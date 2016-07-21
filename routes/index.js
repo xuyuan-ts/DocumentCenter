@@ -27,7 +27,7 @@ router.get('/', function (req, res) {
         }
 
         res.render('index', {
-            documents: sortObject(data, 'name')
+            documents: sortObject(data, 'order')
         });
     });
 });
@@ -37,7 +37,8 @@ router.get('/documents/*', function (req, res) {
 
     fs.readFile(path.join(documentDistPath, dicPath, 'README.html'), function (err, textData) {
         if (err) {
-            throw err;
+            console.error(err);
+            return;
         }
         var text = textData.toString();
         res.send(text);

@@ -77,9 +77,9 @@ module.exports = function (grunt) {
                     preCompile: function (src, context) {
                         //var reg = /\!\[.*\]\(\w*.png\)/ig;
                         var reg = /\!\[.*\]\(\w*(.png|.jpg|.jpeg|.gif)\)/ig;
-                        var newSrc=src.replace(reg, function () {
-                            var imagePath = arguments[0].substring(arguments[0].lastIndexOf('(')+1, arguments[0].lastIndexOf(')'));
-                            var parsedPath = arguments[0].replace(imagePath, '/dist/documents/images/'+imagePath);
+                        var newSrc=src.replace(reg, function (matchedStr) {
+                            var imagePath = matchedStr.substring(matchedStr.lastIndexOf('(')+1, matchedStr.lastIndexOf(')'));
+                            var parsedPath = matchedStr.replace(imagePath, '/dist/documents/images/'+imagePath);
                             return parsedPath;
                         });
                         return newSrc;
